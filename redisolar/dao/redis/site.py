@@ -40,7 +40,10 @@ class SiteDaoRedis(SiteDaoBase, RedisDaoBase):
         site_ids_key = self.key_schema.site_ids_key()
         site_ids = self.redis.smembers(site_ids_key)
         site_hashes = []  # type: ignore
+        # p = self.redis.pipeline()
         for site_id in site_ids:
-            site_hash_key = self.key_schema.site_hash_key(site_id)
-            site_hashes.append(self.redis.hgetall(site_hash_key))
+            hash_key = self.key_schema.site_hash_key(site_id)
+            # p.hgetall(hash_key)
+            site_hashes.append(self.redis.hgetall(hash_key))
+        # site_hashes = p.execute()
         return {FlatSiteSchema().load(site_hash) for site_hash in site_hashes}
